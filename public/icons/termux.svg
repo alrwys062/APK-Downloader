@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#000000"/>
+  <rect x="32" y="32" width="448" height="448" rx="80" fill="none" stroke="#00E5FF" stroke-width="12"/>
+  <!-- Terminal Prompt -->
+  <path d="M140 180 L230 256 L140 332" fill="none" stroke="#00E5FF" stroke-width="32" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="260" y1="332" x2="350" y2="332" stroke="#00E5FF" stroke-width="32" stroke-linecap="round"/>
+</svg>

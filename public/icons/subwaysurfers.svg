@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="subwayGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stopColor="#FFCC00"/>
+      <stop offset="100%" stopColor="#FF8800"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#subwayGrad)"/>
+  <!-- Jake Red Cap & Graffiti Character Badge -->
+  <circle cx="256" cy="270" r="130" fill="#FFE0B2"/>
+  <path d="M120 220 Q256 90 392 220 L380 240 Q256 160 132 240 Z" fill="#D32F2F"/>
+  <path d="M220 120 Q320 70 420 140 L380 180 Q310 130 220 150 Z" fill="#B71C1C"/>
+  <circle cx="205" cy="280" r="18" fill="#212121"/>
+  <circle cx="307" cy="280" r="18" fill="#212121"/>
+  <path d="M200 330 Q256 380 312 330" stroke="#D32F2F" stroke-width="14" fill="none" stroke-linecap="round"/>
+</svg>
