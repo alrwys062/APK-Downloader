@@ -21,6 +21,7 @@ export async function POST(req: NextRequest) {
     const urlAnalysis = identifyAppUrl(trimmedQuery);
     let results: ApkItem[] = [];
     let recognizedItem: ApkItem | null = null;
+    const isDirectRecognition = !!urlAnalysis.packageId;
 
     // 1. Direct URL or Package ID Recognition Flow
     if (urlAnalysis.packageId) {
@@ -77,46 +78,64 @@ export async function POST(req: NextRequest) {
       results = [...VERIFIED_PACKAGES];
     }
 
-    // Filter by CPU Architecture
-    if (architectures && architectures.length > 0) {
-      results = results.filter(item => {
-        if (item.architectures.includes('universal')) return true;
-        return architectures.some(arch => item.architectures.includes(arch));
-      });
-    }
+    // Only apply restrictive filters if NOT in direct URL recognition mode,
+    // OR if the filter still leaves items (so we never falsely show 0 sources for a recognized game!)
+    if (!isDirectRecognition) {
+      // Filter by Repository Source
+      if (source && source !== 'all') {
+        results = results.filter(item => item.source === source);
+      }
 
-    // Filter by Android Version
-    if (androidVersion && androidVersion !== 'all') {
-      const targetApi = parseInt(androidVersion, 10);
-      if (!isNaN(targetApi)) {
-        results = results.filter(item => item.minSdk <= targetApi);
+      // Filter by Source Type (official vs mod)
+      if (sourceType && sourceType !== 'all') {
+        results = results.filter(item => item.sourceType === sourceType);
+      }
+
+      // Filter by Format (apk, xapk, split, bundle)
+      if (format && format !== 'all') {
+        results = results.filter(item => item.fileFormat === format);
+      }
+
+      // Filter by Android Version
+      if (androidVersion && androidVersion !== 'all') {
+        const targetApi = parseInt(androidVersion, 10);
+        if (!isNaN(targetApi)) {
+          results = results.filter(item => item.minSdk <= targetApi);
+        }
+      }
+    } else {
+      // In direct recognition mode, if user explicitly selected a single source, allow filtering ONLY if it doesn't leave 0 results
+      if (source && source !== 'all') {
+        const filteredBySource = results.filter(item => item.source === source);
+        if (filteredBySource.length > 0) {
+          results = filteredBySource;
+        }
       }
     }
 
-    // Filter by Format (apk, xapk, split, bundle)
-    if (format && format !== 'all') {
-      results = results.filter(item => item.fileFormat === format);
-    }
-
-    // Filter by Repository Source
-    if (source && source !== 'all') {
-      results = results.filter(item => item.source === source);
-    }
-
-    // Filter by Source Type (official vs mod)
-    if (sourceType && sourceType !== 'all') {
-      results = results.filter(item => item.sourceType === sourceType);
+    // Filter by CPU Architecture if user explicitly requested
+    if (architectures && architectures.length > 0) {
+      const filteredByArch = results.filter(item => {
+        if (item.architectures.includes('universal')) return true;
+        return architectures.some(arch => item.architectures.includes(arch));
+      });
+      if (filteredByArch.length > 0) {
+        results = filteredByArch;
+      }
     }
 
     // Filter by Device Type
     if (deviceType && deviceType !== 'all') {
-      results = results.filter(item => {
+      const filteredByDevice = results.filter(item => {
         if (deviceType === 'phone') return item.deviceCompatibility.phone;
         if (deviceType === 'tablet') return item.deviceCompatibility.tablet;
         if (deviceType === 'tv') return item.deviceCompatibility.tv;
         if (deviceType === 'pc_emulator') return item.deviceCompatibility.pcEmulator;
         return true;
       });
+      if (filteredByDevice.length > 0) {
+        results = filteredByDevice;
+      }
     }
 
     // Sorting

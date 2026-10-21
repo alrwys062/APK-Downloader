@@ -7,7 +7,12 @@ export type ApkSource =
   | 'apkba'
   | 'apkcombo'
   | 'uptodown'
-  | 'aptoide';
+  | 'aptoide'
+  | 'apksupport'
+  | 'taptap'
+  | 'apkmonk'
+  | 'aurora'
+  | 'softpedia';
 
 export type CpuArchitecture = 'arm64-v8a' | 'armeabi-v7a' | 'x86' | 'x86_64' | 'universal';
 

@@ -61,6 +61,16 @@ export const AppCard: React.FC<AppCardProps> = ({
         return 'border-blue-500/40 text-blue-300 bg-blue-950/40';
       case 'apkba':
         return 'border-indigo-500/40 text-indigo-300 bg-indigo-950/40';
+      case 'apksupport':
+        return 'border-violet-500/40 text-violet-300 bg-violet-950/40';
+      case 'taptap':
+        return 'border-emerald-400/40 text-emerald-200 bg-emerald-950/40';
+      case 'apkmonk':
+        return 'border-pink-500/40 text-pink-300 bg-pink-950/40';
+      case 'aurora':
+        return 'border-blue-400/40 text-blue-200 bg-blue-950/40';
+      case 'softpedia':
+        return 'border-lime-500/40 text-lime-300 bg-lime-950/40';
       default:
         return 'border-slate-500/40 text-slate-300 bg-slate-900/40';
     }

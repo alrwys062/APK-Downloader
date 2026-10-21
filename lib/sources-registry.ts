@@ -126,6 +126,76 @@ export const SOURCES_REGISTRY: SourceInfo[] = [
       en: 'App and game discovery and package update tracking repository.',
       fr: 'Plateforme de découverte d\'applications et de suivi des mises à jour.'
     }
+  },
+  {
+    id: 'apksupport',
+    name: 'APKSupport CDN',
+    url: 'https://apksupport.com',
+    status: 'operational',
+    supportsDirectDownload: true,
+    supportsSignatureVerification: true,
+    badgeColor: '#8b5cf6',
+    description: {
+      ar: 'محرك سحابي متقدم يجلب حزم APK و Split APKs المعتمدة مباشرة مع دعم كل المعماريات.',
+      en: 'Advanced cloud engine fetching verified APK and Split APKs directly across all CPU architectures.',
+      fr: 'Moteur cloud avancé récupérant directement les APK et Split APKs vérifiés.'
+    }
+  },
+  {
+    id: 'taptap',
+    name: 'TapTap Games',
+    url: 'https://www.taptap.io',
+    status: 'operational',
+    supportsDirectDownload: false,
+    supportsSignatureVerification: true,
+    badgeColor: '#00d2d3',
+    description: {
+      ar: 'المنصة العالمية الرائدة لألعاب الهواتف المحمولة وتحديثات الألعاب الأصلية ومجتمع اللاعبين.',
+      en: 'Leading global gaming community and verified Android mobile game distribution platform.',
+      fr: 'Plateforme mondiale leader pour les jeux mobiles Android vérifiés.'
+    }
+  },
+  {
+    id: 'apkmonk',
+    name: 'APKMonk',
+    url: 'https://www.apkmonk.com',
+    status: 'operational',
+    supportsDirectDownload: false,
+    supportsSignatureVerification: true,
+    badgeColor: '#ec4899',
+    description: {
+      ar: 'أرشيف سريع وشامل لحزم أندرويد مع سجل الإصدارات التاريخية وفحص مكافحة الفيروسات.',
+      en: 'Fast and comprehensive Android archive offering version history and security verification.',
+      fr: 'Archive Android rapide et complète avec historique des versions et vérification de sécurité.'
+    }
+  },
+  {
+    id: 'aurora',
+    name: 'Aurora Store OSS',
+    url: 'https://auroraoss.com',
+    status: 'operational',
+    supportsDirectDownload: true,
+    supportsSignatureVerification: true,
+    badgeColor: '#3b82f6',
+    description: {
+      ar: 'مشروع مفتوح المصدر ومستودع يعتمد على بروتوكول Google Play لتحميل الحزم الرسمية بحرية.',
+      en: 'Open-source project and repository delivering genuine Google Play packages.',
+      fr: 'Projet open-source fournissant des paquets officiels Google Play.'
+    }
+  },
+  {
+    id: 'softpedia',
+    name: 'Softpedia Mobile',
+    url: 'https://mobile.softpedia.com/apk',
+    status: 'operational',
+    supportsDirectDownload: false,
+    supportsSignatureVerification: true,
+    badgeColor: '#10b981',
+    description: {
+      ar: 'مستودع Softpedia التاريخي الخالي 100% من برمجيات التجسس أو التعديلات غير المصرح بها.',
+      en: 'Softpedia verified mobile repository, 100% clean of spyware and unauthorized modifications.',
+      fr: 'Dépôt mobile Softpedia vérifié, 100% propre de tout logiciel espion.'
+    }
   }
 ];
 

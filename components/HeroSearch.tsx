@@ -86,12 +86,29 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
     { id: 'apkfab', label: 'APKFab' },
     { id: 'uptodown', label: 'Uptodown' },
     { id: 'fdroid', label: 'F-Droid' },
+    { id: 'apksupport', label: 'APKSupport' },
+    { id: 'taptap', label: 'TapTap' },
+    { id: 'apkmonk', label: 'APKMonk' },
+    { id: 'aurora', label: 'Aurora Store' },
+    { id: 'softpedia', label: 'Softpedia' },
     { id: 'apkba', label: 'APKBA' },
   ];
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       onSearch();
+    }
+  };
+
+  const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
+    const text = e.clipboardData.getData('text');
+    if (text) {
+      onFilterChange({ query: text });
+      if (text.includes('play.google.com') || text.includes('id=') || (text.includes('.') && !text.includes(' '))) {
+        setTimeout(() => {
+          onSearch();
+        }, 100);
+      }
     }
   };
 
@@ -216,6 +233,7 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
                   value={filters.query}
                   onChange={(e) => onFilterChange({ query: e.target.value })}
                   onKeyDown={handleKeyDown}
+                  onPaste={handlePaste}
                   placeholder={t.searchPlaceholder}
                   className="w-full bg-transparent text-white placeholder-cyan-200/50 px-3 sm:pr-10 sm:pl-10 py-2 sm:py-3 text-sm sm:text-base md:text-lg focus:outline-none focus:ring-0 font-medium"
                   dir="auto"

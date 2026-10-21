@@ -61,8 +61,16 @@ export default function Home() {
     document.documentElement.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
   }, [currentLang]);
 
+  const searchAbortRef = React.useRef<AbortController | null>(null);
+
   // Execute search via API
   const handleSearch = useCallback(async (customFilters?: Partial<SearchFilters>) => {
+    if (searchAbortRef.current) {
+      searchAbortRef.current.abort();
+    }
+    const abortController = new AbortController();
+    searchAbortRef.current = abortController;
+
     setIsLoading(true);
     const activeFilters = { ...filters, ...(customFilters || {}) };
     
@@ -71,6 +79,7 @@ export default function Home() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(activeFilters),
+        signal: abortController.signal
       });
 
       const data = await res.json();
@@ -82,17 +91,32 @@ export default function Home() {
           setRecognizedApp(null);
         }
       }
-    } catch (err) {
-      console.error('Search request failed:', err);
+    } catch (err: unknown) {
+      if ((err as Error)?.name !== 'AbortError') {
+        console.error('Search request failed:', err);
+      }
     } finally {
-      setIsLoading(false);
+      if (!abortController.signal.aborted) {
+        setIsLoading(false);
+      }
     }
   }, [filters]);
 
   const handleFilterChange = (newFilters: Partial<SearchFilters>) => {
     const updated = { ...filters, ...newFilters };
     setFilters(updated);
-    handleSearch(newFilters);
+
+    if (newFilters.query !== undefined) {
+      const trimmed = newFilters.query.trim();
+      // If user pasted or typed a URL or dot-separated package name, search immediately with the new query
+      if (trimmed.includes('play.google.com') || trimmed.includes('id=') || (trimmed.includes('.') && !trimmed.includes(' '))) {
+        handleSearch({ ...updated, query: trimmed });
+      } else if (trimmed === '') {
+        handleSearch({ ...updated, query: '' });
+      }
+    } else {
+      handleSearch(newFilters);
+    }
   };
 
   const handleSelectTag = (tagQuery: string) => {

@@ -35,7 +35,13 @@ export async function GET(req: NextRequest) {
       url.includes('apkmirror.com/?post_type=app_release') ||
       url.includes('uptodown.com/android/search') ||
       url.includes('apkcombo.com/apk-downloader') ||
-      url.includes('apkfab.com/search');
+      url.includes('apkfab.com/download') ||
+      url.includes('apkfab.com/search') ||
+      url.includes('apksupport.com') ||
+      url.includes('taptap.io') ||
+      url.includes('apkmonk.com') ||
+      url.includes('auroraoss.com') ||
+      url.includes('softpedia.com');
 
     if (isStoreWebPage) {
       return NextResponse.redirect(url, { status: 302 });
