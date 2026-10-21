@@ -176,3 +176,23 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
+export async function GET(req: NextRequest) {
+  const searchParams = req.nextUrl.searchParams;
+  const query = searchParams.get('q') || searchParams.get('query') || '';
+  const format = (searchParams.get('format') || 'all') as SearchFilters['format'];
+  const source = (searchParams.get('source') || 'all') as SearchFilters['source'];
+  const sortBy = (searchParams.get('sortBy') || 'relevance') as SearchFilters['sortBy'];
+
+  // Construct a dummy Request with json() returning the query params
+  const fakeReq = {
+    json: async () => ({
+      query,
+      format,
+      source,
+      sortBy
+    })
+  } as unknown as NextRequest;
+
+  return POST(fakeReq);
+}
