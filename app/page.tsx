@@ -62,6 +62,11 @@ export default function Home() {
   }, [currentLang]);
 
   const searchAbortRef = React.useRef<AbortController | null>(null);
+  const filtersRef = React.useRef(filters);
+
+  useEffect(() => {
+    filtersRef.current = filters;
+  }, [filters]);
 
   // Execute search via API
   const handleSearch = useCallback(async (customFilters?: Partial<SearchFilters>) => {
@@ -72,7 +77,7 @@ export default function Home() {
     searchAbortRef.current = abortController;
 
     setIsLoading(true);
-    const activeFilters = { ...filters, ...(customFilters || {}) };
+    const activeFilters = { ...filtersRef.current, ...(customFilters || {}) };
     
     try {
       const res = await fetch('/api/apk/search', {
@@ -100,10 +105,11 @@ export default function Home() {
         setIsLoading(false);
       }
     }
-  }, [filters]);
+  }, []);
 
   const handleFilterChange = (newFilters: Partial<SearchFilters>) => {
-    const updated = { ...filters, ...newFilters };
+    const updated = { ...filtersRef.current, ...newFilters };
+    filtersRef.current = updated;
     setFilters(updated);
 
     if (newFilters.query !== undefined) {

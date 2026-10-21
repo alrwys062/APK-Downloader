@@ -338,11 +338,24 @@ export const AppDetailModal: React.FC<AppDetailModalProps> = ({
                 </div>
 
                 <button
-                  onClick={() => onDownload(app.downloadUrl!, `${app.packageName}_v${app.version}.apk`)}
-                  className="px-5 py-2 rounded-xl font-black text-xs bg-gradient-to-r from-cyan-400 to-cyan-300 hover:from-cyan-300 text-slate-950 shadow-[0_0_15px_rgba(6,182,212,0.5)] transition-all flex items-center gap-1.5"
+                  onClick={() => {
+                    if (app.verifiedDirectDownload) {
+                      const ext = app.fileFormat === 'xapk' ? 'xapk' : 'apk';
+                      onDownload(app.downloadUrl!, `${app.packageName}_v${app.version}.${ext}`);
+                    } else {
+                      window.open(app.downloadUrl, '_blank', 'noopener,noreferrer');
+                    }
+                  }}
+                  className="px-5 py-2 rounded-xl font-black text-xs bg-gradient-to-r from-cyan-400 to-cyan-300 hover:from-cyan-300 text-slate-950 shadow-[0_0_15px_rgba(6,182,212,0.5)] transition-all flex items-center gap-1.5 cursor-pointer"
                 >
                   <Download className="w-4 h-4 stroke-[2.5]" />
-                  <span>تحميل مباشر</span>
+                  <span>
+                    {app.verifiedDirectDownload
+                      ? app.fileFormat === 'xapk'
+                        ? 'تحميل مباشر (XAPK)'
+                        : 'تحميل مباشر (APK)'
+                      : 'فتح صفحة المصدر'}
+                  </span>
                 </button>
               </div>
             )}

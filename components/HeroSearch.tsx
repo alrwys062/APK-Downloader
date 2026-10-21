@@ -96,6 +96,7 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
+      e.preventDefault();
       onSearch();
     }
   };
@@ -103,12 +104,8 @@ export const HeroSearch: React.FC<HeroSearchProps> = ({
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
     const text = e.clipboardData.getData('text');
     if (text) {
+      e.preventDefault();
       onFilterChange({ query: text });
-      if (text.includes('play.google.com') || text.includes('id=') || (text.includes('.') && !text.includes(' '))) {
-        setTimeout(() => {
-          onSearch();
-        }, 100);
-      }
     }
   };
 

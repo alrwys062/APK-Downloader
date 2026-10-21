@@ -49,37 +49,66 @@ export async function GET(req: NextRequest) {
 
     // For direct binary links (Aptoide, APKPure CDN, F-Droid, Vendor CDN):
     try {
+      const rangeHeader = req.headers.get('range');
+      const upstreamHeaders: Record<string, string> = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
+        'Accept': '*/*',
+        'Referer': parsedUrl.origin
+      };
+      if (rangeHeader) {
+        upstreamHeaders['Range'] = rangeHeader;
+      }
+
       const upstreamRes = await fetch(url, {
         redirect: 'follow',
-        headers: {
-          'User-Agent': 'Mozilla/5.0 (Linux; Android 14; Pixel 8) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Mobile Safari/537.36',
-          'Accept': '*/*',
-          'Referer': parsedUrl.origin
-        },
-        signal: AbortSignal.timeout(20000)
+        headers: upstreamHeaders,
+        // Allow up to 10 minutes for large game binaries (400MB - 2.5GB) to stream smoothly
+        signal: AbortSignal.timeout(600000)
       });
 
       const contentType = upstreamRes.headers.get('content-type') || '';
 
       // If upstream returned an HTML page (e.g. Cloudflare challenge), redirect user's browser directly to it
-      if (contentType.includes('text/html') || !upstreamRes.ok) {
+      if (contentType.includes('text/html') || !upstreamRes.ok && upstreamRes.status !== 206) {
         return NextResponse.redirect(url, { status: 302 });
+      }
+
+      // Check for upstream Content-Disposition filename
+      const upstreamDisp = upstreamRes.headers.get('content-disposition');
+      if (upstreamDisp) {
+        const match = upstreamDisp.match(/filename\*?=(?:UTF-8'')?"?([^";]+)"?/i);
+        if (match && match[1]) {
+          try {
+            const extracted = decodeURIComponent(match[1].replace(/\+/g, ' '));
+            if (extracted && (extracted.toLowerCase().endsWith('.apk') || extracted.toLowerCase().endsWith('.xapk') || extracted.toLowerCase().endsWith('.apks'))) {
+              filename = extracted;
+            }
+          } catch {
+            // Keep existing filename
+          }
+        }
       }
 
       // Stream real binary package to browser
       const headers = new Headers();
-      const isXapk = filename.endsWith('.xapk') || contentType.includes('zip') || contentType.includes('octet-stream');
+      const isXapk = filename.toLowerCase().endsWith('.xapk') || contentType.includes('xapk') || contentType.includes('zip') || contentType.includes('octet-stream');
       headers.set('Content-Type', isXapk ? 'application/octet-stream' : 'application/vnd.android.package-archive');
-      headers.set('Content-Disposition', `attachment; filename="${encodeURIComponent(filename)}"`);
+      headers.set('Content-Disposition', `attachment; filename="${encodeURIComponent(filename)}"; filename*=UTF-8''${encodeURIComponent(filename)}`);
+      headers.set('Accept-Ranges', 'bytes');
 
       const contentLength = upstreamRes.headers.get('content-length');
       if (contentLength) {
         headers.set('Content-Length', contentLength);
       }
 
+      const contentRange = upstreamRes.headers.get('content-range');
+      if (contentRange) {
+        headers.set('Content-Range', contentRange);
+      }
+
       // Allow streaming chunk by chunk without memory buffering
       return new NextResponse(upstreamRes.body, {
-        status: 200,
+        status: upstreamRes.status === 206 ? 206 : 200,
         headers
       });
     } catch (streamErr) {

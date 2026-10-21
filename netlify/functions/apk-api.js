@@ -147,17 +147,27 @@ exports.handler = async (event, context) => {
 
   // Multi-source generation for the package
   const title = pkg.split('.').pop().replace(/[_-]/g, ' ').toUpperCase();
+  const directXapkUrl = `https://d.apkpure.net/b/XAPK/${encodeURIComponent(pkg)}?version=latest`;
   const directApkUrl = `https://d.apkpure.net/b/APK/${encodeURIComponent(pkg)}?version=latest`;
 
   const sources = [
     {
       source: 'apkpure',
-      name: 'APKPure',
-      format: 'XAPK/APK',
+      name: 'APKPure (XAPK كامل بالداتا OBB)',
+      format: 'XAPK',
+      isDirect: true,
+      downloadUrl: directXapkUrl,
+      sourceUrl: `https://apkpure.com/p/${encodeURIComponent(pkg)}`,
+      description: 'حزمة XAPK كاملة مدمجة مع ملفات OBB من خادم التوزيع الرسمي لـ APKPure.'
+    },
+    {
+      source: 'apkpure',
+      name: 'APKPure (حزمة التثبيت Base APK)',
+      format: 'APK',
       isDirect: true,
       downloadUrl: directApkUrl,
       sourceUrl: `https://apkpure.com/p/${encodeURIComponent(pkg)}`,
-      description: 'حزمة مباشرة مع فحص التوقيع الرقمي الأصلي للمطور.'
+      description: 'حزمة APK الأساسية السريعة للتثبيت المبدئي الخفيف.'
     },
     {
       source: 'aptoide',
